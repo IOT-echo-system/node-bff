@@ -10,7 +10,7 @@ const invoice = {
 export type InvoiceConfig = typeof invoice
 
 export const apiConfig = {
-  baseUrl: process.env.API_BACKEND_URL!,
+  baseUrl: process.env.API_GATEWAY_BASE_URL!,
   board,
   invoice
 } as const
