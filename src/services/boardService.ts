@@ -32,7 +32,7 @@ export class BoardService {
     return this.webClient.post({
       baseUrl: this.config.baseUrl,
       path: this.config.heartBeat,
-      headers: { clientId: payload.clientId }
+      headers: { authorization: payload.clientId }
     })
   }
 
