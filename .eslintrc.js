@@ -103,7 +103,7 @@ module.exports = {
     'no-useless-return': 'error',
     'max-depth': 'error',
     'no-mixed-operators': 'error',
-    complexity: ['error', 4],
+    complexity: ['error', 10],
     'no-template-curly-in-string': 'error',
     'array-callback-return': 'error',
     'default-param-last': 'error',
@@ -138,13 +138,18 @@ module.exports = {
       }
     },
     {
-      files: ['src/handler.ts'],
+      files: ['src/handler/mqttHandler.ts'],
       rules: {
-        'max-len': 'warn',
         '@typescript-eslint/no-magic-numbers': 'off',
         'max-statements': 'off',
         'complexity': 'off',
         '@typescript-eslint/no-unsafe-assignment': 'off'
+      }
+    },
+    {
+      files: ['src/routers/*.ts'],
+      rules: {
+        '@typescript-eslint/unbound-method': 'off'
       }
     },
     {
@@ -159,6 +164,20 @@ module.exports = {
       files: ['src/services/widgetService.ts'],
       rules: {
         '@typescript-eslint/no-unnecessary-condition': 'off'
+      }
+    },
+    {
+      files: ['src/services/invoiceService.ts'],
+      rules: {
+        '@typescript-eslint/no-unused-vars': 'off',
+        '@typescript-eslint/no-unsafe-member-access': 'off',
+        '@typescript-eslint/no-unsafe-assignment': 'off'
+      }
+    },
+    {
+      files: ['src/typing/*.d.ts'],
+      rules: {
+        '@typescript-eslint/no-redundant-type-constituents': 'off'
       }
     }
   ]

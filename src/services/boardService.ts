@@ -1,51 +1,42 @@
-export const boardService = {
-  // async getBoards(request: Request): Promise<Board[]> {
-  //   const boards = await WebClient.get<BoardResponse[]>({
-  //     baseUrl: boardConfig.baseUrl,
-  //     path: boardConfig.boards,
-  //     headers: request.headers as Record<string, string>
-  //   })
-  //   const boardIds = boards.map(board => board.boardId)
-  //   const widgets = await widgetService.getWidgetsByBoardIds(request, boardIds)
-  //   return boards.map(board => {
-  //     return { ...board, widgets: widgets.filter(widget => widget.boardId === board.boardId) } as Board
-  //   })
-  // },
-  //
-  // createNewBoard(request: Request): Promise<Board> {
-  //   return WebClient.post<Board>({
-  //     baseUrl: boardConfig.baseUrl,
-  //     path: boardConfig.boards,
-  //     headers: request.headers as Record<string, string>,
-  //     body: request.body as Record<string, string>
-  //   })
-  // },
-  //
-  // updateBoardName(request: Request): Promise<Board> {
-  //   return WebClient.put<Board>({
-  //     baseUrl: boardConfig.baseUrl,
-  //     path: boardConfig.updateBoardName,
-  //     headers: request.headers as Record<string, string>,
-  //     body: request.body as Record<string, string>,
-  //     uriVariables: { boardId: request.params.boardId }
-  //   })
-  // },
-  //
-  // getSecretKey(request: Request): Promise<BoardSecretKeyResponse> {
-  //   return WebClient.get<BoardSecretKeyResponse>({
-  //     baseUrl: authConfig.baseUrl,
-  //     path: boardConfig.baseUrl + boardConfig.secretKey,
-  //     headers: request.headers as Record<string, string>,
-  //     uriVariables: { boardId: request.params.boardId } as Record<string, string>
-  //   })
-  // },
-  //
-  // updateSecretKey(request: Request): Promise<BoardSecretKeyResponse> {
-  //   return WebClient.put<BoardSecretKeyResponse>({
-  //     baseUrl: authConfig.baseUrl,
-  //     path: boardConfig.baseUrl + boardConfig.secretKey,
-  //     headers: request.headers as Record<string, string>,
-  //     uriVariables: { boardId: request.params.boardId } as Record<string, string>
-  //   })
-  // }
-} as const
+import type { Request } from 'express'
+import type { ClientId, ClientIdentifier, MqttPacket } from '../typing/mqtt'
+import type { WebClientType } from './webClient'
+import type { BoardConfig } from '../config/apiConfig'
+import type { MqttClient } from '../mqtt'
+import type { BoardData } from '../typing/board'
+
+export class BoardService {
+  private readonly config: BoardConfig
+  private readonly webClient: WebClientType
+  private readonly mqtt: MqttClient
+
+  constructor(boardConfig: BoardConfig, webClient: WebClientType, mqtt: MqttClient) {
+    this.config = boardConfig
+    this.webClient = webClient
+    this.mqtt = mqtt
+  }
+
+  restart(request: Request): Promise<MqttPacket> {
+    const client: ClientIdentifier = request.app.locals.client as ClientIdentifier
+    const clientId: ClientId = { clientId: client.clientId }
+    return this.mqtt.publishToBoard(clientId, 'RESTART')
+  }
+
+  setupMode(request: Request): Promise<MqttPacket> {
+    const client: ClientIdentifier = request.app.locals.client as ClientIdentifier
+    const clientId: ClientId = { clientId: client.clientId }
+    return this.mqtt.publishToBoard(clientId, 'SETUP')
+  }
+
+  handleHeartBeat(payload: ClientIdentifier): Promise<void> {
+    return this.webClient.post({
+      baseUrl: this.config.baseUrl,
+      path: this.config.heartBeat,
+      headers: { clientId: payload.clientId }
+    })
+  }
+
+  handle(mqttTopicData: BoardData): Promise<void> {
+    return this.handleHeartBeat(mqttTopicData)
+  }
+}

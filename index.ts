@@ -1,3 +1,9 @@
-import main from './src/mqtt'
+import logger from 'logging-starter'
+import app from './src/app'
 
-main()
+const port = Number(process.env.PORT ?? '3002')
+
+app.listen(port, () => {
+  logger.info({ message: `cloud bff is started on port ${port}` })
+})
+

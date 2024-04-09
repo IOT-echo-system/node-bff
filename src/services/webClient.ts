@@ -7,3 +7,4 @@ WebClient.interceptor.request(config => {
 })
 
 export default WebClient
+export type WebClientType = typeof WebClient
