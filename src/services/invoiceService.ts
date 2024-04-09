@@ -67,7 +67,7 @@ export class InvoiceService {
   }
 
   updateState(clientIdentifier: ClientIdentifier, invoiceState: InvoiceState): Promise<MqttPacket> {
-    return this.mqtt.publish(clientIdentifier, 'invoice/STATE', invoiceState)
+    return this.mqtt.publish(clientIdentifier, 'STATE', invoiceState)
   }
 
   private async getState(invoiceData: InvoiceData<'STATE'>): Promise<MqttPacket> {
@@ -77,6 +77,6 @@ export class InvoiceService {
       headers: { authorization: invoiceData.clientId },
       uriVariables: { invoiceId: invoiceData.widget.widgetId }
     })
-    return this.mqtt.publish(invoiceData as ClientIdentifier, 'STATE', state)
+    return this.updateState(invoiceData, state)
   }
 }
