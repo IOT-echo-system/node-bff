@@ -2,7 +2,7 @@ const board = { baseUrl: '/boards', heartBeat: '/heartbeat' } as const
 export type BoardConfig = typeof board
 
 const invoice = {
-  baseUrl: '/widgets/invoice/{invoiceId}',
+  baseUrl: '/widgets/invoices/{invoiceId}',
   reset: '/items/reset',
   items: '/items',
   state: '/state'
