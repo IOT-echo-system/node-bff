@@ -4,7 +4,7 @@ export type BoardConfig = typeof board
 const invoice = {
   baseUrl: '/widgets/invoices/{invoiceId}',
   reset: '/items/reset',
-  items: '/items',
+  items: '/items/{code}',
   state: '/state'
 } as const
 export type InvoiceConfig = typeof invoice

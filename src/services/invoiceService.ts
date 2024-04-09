@@ -51,7 +51,7 @@ export class InvoiceService {
       baseUrl: this.config.baseUrl,
       path: this.config.items,
       headers: { authorization: invoiceData.clientId },
-      uriVariables: { invoiceId: invoiceData.widget.widgetId }
+      uriVariables: { invoiceId: invoiceData.widget.widgetId, code: invoiceData.data.code }
     })
     return this.updateState(invoiceData, invoiceState)
   }
@@ -61,7 +61,7 @@ export class InvoiceService {
       baseUrl: this.config.baseUrl,
       path: this.config.items,
       headers: { authorization: invoiceData.clientId },
-      uriVariables: { invoiceId: invoiceData.widget.widgetId }
+      uriVariables: { invoiceId: invoiceData.widget.widgetId, code: invoiceData.data.code }
     })
     return this.updateState(invoiceData, invoiceState)
   }
