@@ -1,8 +1,7 @@
 import logger from 'logging-starter'
 import type { InvoiceConfig } from '../config/apiConfig'
-import type { ActionMap, InvoiceData, InvoiceState } from '../typing/invoice'
+import type { InvoiceData, InvoiceState } from '../typing/invoice'
 import type { WebClientType } from './webClient'
-import type { Request } from 'express'
 import type { MqttClient } from '../mqtt'
 import type { ClientIdentifier, MqttPacket } from '../typing/mqtt'
 
@@ -17,7 +16,7 @@ export class InvoiceService {
     this.mqtt = mqtt
   }
 
-  handle(invoiceData: InvoiceData): Promise<void> {
+  handle(invoiceData: InvoiceData): Promise<MqttPacket> {
     switch (invoiceData.data.action) {
       case 'RESET': {
         return this.reset(invoiceData)
@@ -29,7 +28,7 @@ export class InvoiceService {
         return this.removeItem(invoiceData)
       }
       case 'STATE': {
-        return this.getState(invoiceData) as Promise<void>
+        return this.getState(invoiceData)
       }
       default:
         logger.error({ errorMessage: 'invalid action for invoice widget' })
@@ -37,39 +36,38 @@ export class InvoiceService {
     }
   }
 
-  private reset(invoiceData: InvoiceData<'RESET'>): Promise<void> {
-    return this.webClient.put({
+  private async reset(invoiceData: InvoiceData<'RESET'>): Promise<MqttPacket> {
+    const invoiceState = await this.webClient.put<InvoiceState>({
       baseUrl: this.config.baseUrl,
       path: this.config.reset,
       headers: { authorization: invoiceData.clientId },
       uriVariables: { invoiceId: invoiceData.widget.widgetId }
     })
+    return this.updateState(invoiceData, invoiceState)
   }
 
-  private addItem(invoiceData: InvoiceData<'ADD'>): Promise<void> {
-    return this.webClient.post({
+  private async addItem(invoiceData: InvoiceData<'ADD'>): Promise<MqttPacket> {
+    const invoiceState = await this.webClient.post<InvoiceState>({
       baseUrl: this.config.baseUrl,
       path: this.config.items,
       headers: { authorization: invoiceData.clientId },
       uriVariables: { invoiceId: invoiceData.widget.widgetId }
     })
+    return this.updateState(invoiceData, invoiceState)
   }
 
-  private removeItem(invoiceData: InvoiceData<'REMOVE'>): Promise<void> {
-    return this.webClient.deleteAPI({
+  private async removeItem(invoiceData: InvoiceData<'REMOVE'>): Promise<MqttPacket> {
+    const invoiceState = await this.webClient.deleteAPI<InvoiceState>({
       baseUrl: this.config.baseUrl,
       path: this.config.items,
       headers: { authorization: invoiceData.clientId },
       uriVariables: { invoiceId: invoiceData.widget.widgetId }
     })
+    return this.updateState(invoiceData, invoiceState)
   }
 
-  updateState(request: Request): Promise<MqttPacket> {
-    return this.mqtt.publish(
-      request.app.locals.client as ClientIdentifier,
-      'invoice/STATE',
-      request.body as Record<string, unknown>
-    )
+  updateState(clientIdentifier: ClientIdentifier, invoiceState: InvoiceState): Promise<MqttPacket> {
+    return this.mqtt.publish(clientIdentifier, 'invoice/STATE', invoiceState)
   }
 
   private async getState(invoiceData: InvoiceData<'STATE'>): Promise<MqttPacket> {

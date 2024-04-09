@@ -1,6 +1,7 @@
 import type { InvoiceService } from '../services'
 import type { Request } from 'express'
-import type { MqttPacket } from '../typing/mqtt'
+import type { ClientIdentifier, MqttPacket } from '../typing/mqtt'
+import type { InvoiceState } from '../typing/invoice'
 
 export class InvoiceController {
   private readonly invoiceService: InvoiceService
@@ -11,6 +12,6 @@ export class InvoiceController {
   }
 
   updateState(request: Request): Promise<MqttPacket> {
-    return this.invoiceService.updateState(request)
+    return this.invoiceService.updateState(request.app.locals.client as ClientIdentifier, request.body as InvoiceState)
   }
 }
