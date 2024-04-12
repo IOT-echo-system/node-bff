@@ -39,7 +39,7 @@ export const logRequestAndResponse = (req: Request, res: Response, next: NextFun
   logger.request({ message: 'Received Request', method: req.method, url: req.url, searchableFields })
   const send = res.send
   let isLogged = false
-  res.send = function(data: Record<string, unknown>) {
+  res.send = function (data: Record<string, unknown>) {
     const responseTime: number = new Date().getTime() - startTime.getTime()
     if (!isLogged) {
       logger.response({
