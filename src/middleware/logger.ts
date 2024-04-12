@@ -3,7 +3,6 @@ import logger from 'logging-starter'
 import { HttpStatus } from '../config/http'
 import type { Widget, WidgetType } from '../typing/mqtt'
 
-const CLIENT_ID_LENGTH = 36
 export const attachTraceId = (req: Request, _res: Response, next: NextFunction): void => {
   req.app.locals.traceId = req.header('x-trace-id') ?? 'missing-trace-id'
   next()
@@ -21,16 +20,16 @@ const createWidget = (req: Request): Widget | undefined => {
 export const attachClient = (req: Request, res: Response, next: NextFunction): void => {
   const clientId = req.header('clientId')
   const boardId = req.header('boardId')
-  if (clientId?.length !== CLIENT_ID_LENGTH || !boardId) {
-    res.status(HttpStatus.BAD_REQUEST).send({ error: 'missing-client-id' })
+  if (!boardId) {
+    res.status(HttpStatus.BAD_REQUEST).send({ error: 'missing-board-id' })
     return
   }
 
   const widget = createWidget(req)
   if (widget) {
-    req.app.locals.client = { clientId, boardId }
+    req.app.locals.client = { clientId: clientId ?? '', boardId }
   }
-  req.app.locals.client = { clientId, boardId, widget }
+  req.app.locals.client = { clientId: clientId ?? '', boardId, widget }
   next()
 }
 
@@ -40,7 +39,7 @@ export const logRequestAndResponse = (req: Request, res: Response, next: NextFun
   logger.request({ message: 'Received Request', method: req.method, url: req.url, searchableFields })
   const send = res.send
   let isLogged = false
-  res.send = function (data: Record<string, unknown>) {
+  res.send = function(data: Record<string, unknown>) {
     const responseTime: number = new Date().getTime() - startTime.getTime()
     if (!isLogged) {
       logger.response({
