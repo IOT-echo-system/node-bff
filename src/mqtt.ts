@@ -32,7 +32,7 @@ export class MqttClient {
     this.mqttClient.on('connect', () => {
       logger.info({ message: 'Successfully connected with mqtt' })
 
-      const allTopics = topics.map(topic => `clientId/+/${topic}`)
+      const allTopics = topics.map(topic => `clientId/+/boardId/+/${topic}`)
 
       this.mqttClient.subscribe(allTopics, { qos: 1 }, error => {
         if (error) {
