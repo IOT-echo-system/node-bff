@@ -143,7 +143,8 @@ module.exports = {
         '@typescript-eslint/no-magic-numbers': 'off',
         'max-statements': 'off',
         'complexity': 'off',
-        '@typescript-eslint/no-unsafe-assignment': 'off'
+        '@typescript-eslint/no-unsafe-assignment': 'off',
+        '@typescript-eslint/no-unused-vars': 'off'
       }
     },
     {

@@ -3,20 +3,21 @@ import type { MqttTopicData, WidgetType } from '../typing/mqtt'
 import { boardService, invoiceService } from '../controllers'
 import type { InvoiceData } from '../typing/invoice'
 import type { BoardData } from '../typing/board'
+import type { Packet } from 'mqtt'
 
 const parseMqttTopicData = (topic: string): MqttTopicData => {
-  const [clientId, widgetName, widgetId, ...topicParts] = topic.split('/').slice(1)
+  const [_client, clientId, _board, boardId, widgetName, widgetId, ...topicParts] = topic.split('/')
   const parsedData: Record<string, string> = {}
   for (let index = 0; index < topicParts.length; index += 2) {
     parsedData[topicParts[index]] = topicParts[index + 1]
   }
   if (widgetName === 'HEART_BEAT' && !widgetId) {
-    return { clientId, widget: { name: 'BOARD', widgetId: 'boardId' }, data: { action: widgetName } }
+    return { clientId, boardId, widget: { name: 'BOARD', widgetId: 'boardId' }, data: { action: widgetName } }
   }
-  return { clientId, widget: { name: widgetName as WidgetType, widgetId }, data: parsedData }
+  return { clientId, boardId, widget: { name: widgetName as WidgetType, widgetId }, data: parsedData }
 }
 
-export const handleMqttMessage = (topic: string): void => {
+export const handleMqttMessage = (topic: string, payload: Buffer, packet: Packet): void => {
   try {
     const mqttTopicData = parseMqttTopicData(topic)
     switch (mqttTopicData.widget.name) {

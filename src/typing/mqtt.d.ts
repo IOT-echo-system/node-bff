@@ -4,7 +4,7 @@ import type { InvoiceData } from './invoice'
 
 export type WidgetType = 'BOARD' | 'INVOICE'
 export type Widget = { widgetId: string; name: WidgetType }
-export type ClientId = { clientId: string }
+export type ClientId = { clientId: string; boardId: string }
 export type ClientIdentifier = ClientId & { widget: Widget }
 export type MqttPacket = Packet | undefined
 

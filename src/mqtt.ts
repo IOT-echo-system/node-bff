@@ -9,7 +9,7 @@ import { handleMqttMessage } from './handler/mqttHandler'
 const createTopic = (clientIdentifier: ClientIdentifier, topic: string): string => {
   const topicName = topic ? `/${topic}` : ''
   const widget = clientIdentifier.widget
-  return `clientId/${clientIdentifier.clientId}/${widget.name}/${widget.widgetId}${topicName}`
+  return `boardId/${clientIdentifier.boardId}/${widget.name}/${widget.widgetId}${topicName}`
 }
 
 export class MqttClient {
@@ -20,6 +20,8 @@ export class MqttClient {
     this.mqttClient = mqttClient.connect(config.mqttUrl, {
       clientId: `node-bff_${config.environment}`,
       clean: true,
+      username: config.mqttUsername,
+      password: config.mqttPassword,
       connectTimeout: 4000,
       reconnectPeriod: 1000
     })
@@ -64,7 +66,7 @@ export class MqttClient {
   }
 
   publishToBoard(clientId: ClientId, topic: string, message: Record<string, unknown> = {}): Promise<MqttPacket> {
-    const topicName = `clientId/${clientId.clientId}${topic ? `/${topic}` : ''}`
+    const topicName = `boardId/${clientId.boardId}${topic ? `/${topic}` : ''}`
     return this.mqttClient
       .publishAsync(topicName, JSON.stringify(message), { qos: 1 })
       .logOnSuccess({ message: 'Successfully published topic', data: { topicName, message } })

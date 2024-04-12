@@ -18,13 +18,13 @@ export class BoardService {
 
   restart(request: Request): Promise<MqttPacket> {
     const client: ClientIdentifier = request.app.locals.client as ClientIdentifier
-    const clientId: ClientId = { clientId: client.clientId }
+    const clientId: ClientId = { clientId: client.clientId, boardId: client.boardId }
     return this.mqtt.publishToBoard(clientId, 'RESTART')
   }
 
   setupMode(request: Request): Promise<MqttPacket> {
     const client: ClientIdentifier = request.app.locals.client as ClientIdentifier
-    const clientId: ClientId = { clientId: client.clientId }
+    const clientId: ClientId = { clientId: client.clientId, boardId: client.boardId }
     return this.mqtt.publishToBoard(clientId, 'SETUP')
   }
 

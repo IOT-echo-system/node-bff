@@ -20,16 +20,17 @@ const createWidget = (req: Request): Widget | undefined => {
 
 export const attachClient = (req: Request, res: Response, next: NextFunction): void => {
   const clientId = req.header('clientId')
-  if (clientId?.length !== CLIENT_ID_LENGTH) {
+  const boardId = req.header('boardId')
+  if (clientId?.length !== CLIENT_ID_LENGTH || !boardId) {
     res.status(HttpStatus.BAD_REQUEST).send({ error: 'missing-client-id' })
     return
   }
 
   const widget = createWidget(req)
   if (widget) {
-    req.app.locals.client = { clientId }
+    req.app.locals.client = { clientId, boardId }
   }
-  req.app.locals.client = { clientId, widget }
+  req.app.locals.client = { clientId, boardId, widget }
   next()
 }
 
