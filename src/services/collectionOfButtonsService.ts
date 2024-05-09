@@ -81,6 +81,6 @@ export class CollectionOfButtonsService {
   // }
 
   updateButtonState(client: ClientIdentifier, buttonState: ButtonState): Promise<MqttPacket> {
-    return this.mqtt.publish(client, `buttons/${buttonState.buttonId}/STATE`, buttonState)
+    return this.mqtt.publish(client, `STATE`, buttonState)
   }
 }
