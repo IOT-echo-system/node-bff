@@ -1,9 +1,10 @@
 import logger from 'logging-starter'
 import type { MqttTopicData, WidgetType } from '../typing/mqtt'
-import { boardService, invoiceService } from '../controllers'
+import { boardService, collectionOfButtonsService, invoiceService } from '../controllers'
 import type { InvoiceData } from '../typing/invoice'
 import type { BoardData } from '../typing/board'
 import type { Packet } from 'mqtt'
+import { CollectionOfButtonsData } from '../typing/collectionOfButtons'
 
 const parseMqttTopicData = (topic: string): MqttTopicData => {
   const [_client, clientId, _board, boardId, widgetName, widgetId, ...topicParts] = topic.split('/')
@@ -27,6 +28,10 @@ export const handleMqttMessage = (topic: string, payload: Buffer, packet: Packet
       }
       case 'INVOICE': {
         invoiceService.handle(mqttTopicData as InvoiceData).catch(() => ({}))
+        return
+      }
+      case 'COLLECTION_OF_BUTTONS': {
+        collectionOfButtonsService.handle(mqttTopicData as CollectionOfButtonsData).catch(() => ({}))
         return
       }
       default:

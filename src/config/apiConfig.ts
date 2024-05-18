@@ -10,10 +10,8 @@ const invoice = {
 export type InvoiceConfig = typeof invoice
 
 const collectionOfButtons = {
-  baseUrl: '/widgets/invoices/{invoiceId}',
-  reset: '/items/reset',
-  items: '/items/{code}',
-  state: '/state'
+  baseUrl: '/widgets/collection-of-buttons/{widgetId}',
+  sensorValue: '/sensors/{buttonId}/value'
 } as const
 export type CollectionOfButtonsConfig = typeof collectionOfButtons
 

@@ -1,1 +1,4 @@
-export type ButtonState = { buttonId: string; type: 'ANALOG' | 'DIGITAL'; mode: 'INPUT' | 'OUTPUT'; value: number }
+import { ClientIdentifier } from './mqtt'
+
+export type ButtonState = { buttonId: string; value: number }
+export type CollectionOfButtonsData = ClientIdentifier & { data: ButtonState }

@@ -2,7 +2,7 @@ import type { Packet } from 'mqtt'
 import type { BoardData } from './board'
 import type { InvoiceData } from './invoice'
 
-export type WidgetType = 'BOARD' | 'INVOICE'
+export type WidgetType = 'BOARD' | 'INVOICE' | 'COLLECTION_OF_BUTTONS'
 export type Widget = { widgetId: string; name: WidgetType }
 export type ClientId = { clientId: string; boardId: string }
 export type ClientIdentifier = ClientId & { widget: Widget }

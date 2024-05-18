@@ -1,84 +1,32 @@
-import type { InvoiceConfig } from '../config/apiConfig'
+import type { CollectionOfButtonsConfig } from '../config/apiConfig'
 import type { WebClientType } from './webClient'
 import type { MqttClient } from '../mqtt'
 import type { ClientIdentifier, MqttPacket } from '../typing/mqtt'
-import type { ButtonState } from '../typing/collectionOfButtons'
+import type { ButtonState, CollectionOfButtonsData } from '../typing/collectionOfButtons'
 
 export class CollectionOfButtonsService {
-  private readonly config: InvoiceConfig
+  private readonly config: CollectionOfButtonsConfig
   private readonly webClient: WebClientType
   private readonly mqtt: MqttClient
 
-  constructor(config: InvoiceConfig, webClient: WebClientType, mqtt: MqttClient) {
+  constructor(config: CollectionOfButtonsConfig, webClient: WebClientType, mqtt: MqttClient) {
     this.config = config
     this.webClient = webClient
     this.mqtt = mqtt
   }
 
-  //
-  // handle(invoiceData: InvoiceData): Promise<MqttPacket> {
-  //   switch (invoiceData.data.action) {
-  //     case 'RESET': {
-  //       return this.reset(invoiceData)
-  //     }
-  //     case 'ADD': {
-  //       return this.addItem(invoiceData)
-  //     }
-  //     case 'REMOVE': {
-  //       return this.removeItem(invoiceData)
-  //     }
-  //     case 'STATE': {
-  //       return this.getState(invoiceData)
-  //     }
-  //     default:
-  //       logger.error({ errorMessage: 'invalid action for invoice widget' })
-  //       return Promise.reject('Unknown topic')
-  //   }
-  // }
-  //
-  // private async reset(invoiceData: InvoiceData<'RESET'>): Promise<MqttPacket> {
-  //   const invoiceState = await this.webClient.put<InvoiceState>({
-  //     baseUrl: this.config.baseUrl,
-  //     path: this.config.reset,
-  //     headers: { authorization: invoiceData.clientId },
-  //     uriVariables: { invoiceId: invoiceData.widget.widgetId }
-  //   })
-  //   return this.updateState(invoiceData, invoiceState)
-  // }
-  //
-  // private async addItem(invoiceData: InvoiceData<'ADD'>): Promise<MqttPacket> {
-  //   const invoiceState = await this.webClient.post<InvoiceState>({
-  //     baseUrl: this.config.baseUrl,
-  //     path: this.config.items,
-  //     headers: { authorization: invoiceData.clientId },
-  //     uriVariables: { invoiceId: invoiceData.widget.widgetId, code: invoiceData.data.code }
-  //   })
-  //   return this.updateState(invoiceData, invoiceState)
-  // }
-  //
-  // private async removeItem(invoiceData: InvoiceData<'REMOVE'>): Promise<MqttPacket> {
-  //   const invoiceState = await this.webClient.deleteAPI<InvoiceState>({
-  //     baseUrl: this.config.baseUrl,
-  //     path: this.config.items,
-  //     headers: { authorization: invoiceData.clientId },
-  //     uriVariables: { invoiceId: invoiceData.widget.widgetId, code: invoiceData.data.code }
-  //   })
-  //   return this.updateState(invoiceData, invoiceState)
-  // }
-  //
-  // updateState(clientIdentifier: ClientIdentifier, invoiceState: InvoiceState): Promise<MqttPacket> {
-  //   return this.mqtt.publish(clientIdentifier, 'STATE', invoiceState)
-  // }
-  //
-  // private async getState(invoiceData: InvoiceData<'STATE'>): Promise<MqttPacket> {
-  //   const state = await this.webClient.get<InvoiceState>({
-  //     baseUrl: this.config.baseUrl,
-  //     path: this.config.state,
-  //     headers: { authorization: invoiceData.clientId },
-  //     uriVariables: { invoiceId: invoiceData.widget.widgetId }
-  //   })
-  //   return this.updateState(invoiceData, state)
-  // }
+  handle(collectionOfButtonsData: CollectionOfButtonsData): Promise<void> {
+    return this.webClient.put<void>({
+      baseUrl: this.config.baseUrl,
+      path: this.config.sensorValue,
+      headers: { authorization: collectionOfButtonsData.clientId },
+      uriVariables: {
+        widgetId: collectionOfButtonsData.widget.widgetId,
+        buttonId: collectionOfButtonsData.data.buttonId
+      },
+      body: { value: collectionOfButtonsData.data.value }
+    })
+  }
 
   updateButtonState(client: ClientIdentifier, buttonState: ButtonState): Promise<MqttPacket> {
     return this.mqtt.publish(client, 'STATE', buttonState)
