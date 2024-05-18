@@ -15,8 +15,8 @@ export class CollectionOfButtonsService {
     this.mqtt = mqtt
   }
 
-  handle(collectionOfButtonsData: CollectionOfButtonsData): Promise<void> {
-    return this.webClient.put<void>({
+  handle(collectionOfButtonsData: CollectionOfButtonsData): Promise<{ status: boolean }> {
+    return this.webClient.put<{ status: boolean }>({
       baseUrl: this.config.baseUrl,
       path: this.config.sensorValue,
       headers: { authorization: collectionOfButtonsData.clientId },

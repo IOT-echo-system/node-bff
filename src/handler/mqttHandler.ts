@@ -4,7 +4,7 @@ import { boardService, collectionOfButtonsService, invoiceService } from '../con
 import type { InvoiceData } from '../typing/invoice'
 import type { BoardData } from '../typing/board'
 import type { Packet } from 'mqtt'
-import { CollectionOfButtonsData } from '../typing/collectionOfButtons'
+import type { CollectionOfButtonsData } from '../typing/collectionOfButtons'
 
 const parseMqttTopicData = (topic: string): MqttTopicData => {
   const [_client, clientId, _board, boardId, widgetName, widgetId, ...topicParts] = topic.split('/')
