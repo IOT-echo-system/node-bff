@@ -2,7 +2,7 @@ import type { CollectionOfButtonsConfig } from '../config/apiConfig'
 import type { WebClientType } from './webClient'
 import type { MqttClient } from '../mqtt'
 import type { ClientIdentifier, MqttPacket } from '../typing/mqtt'
-import type { ButtonState, CollectionOfButtonsData } from '../typing/collectionOfButtons'
+import type { ButtonState } from '../typing/collectionOfButtons'
 
 export class CollectionOfButtonsService {
   private readonly config: CollectionOfButtonsConfig
@@ -15,16 +15,13 @@ export class CollectionOfButtonsService {
     this.mqtt = mqtt
   }
 
-  handle(collectionOfButtonsData: CollectionOfButtonsData): Promise<{ status: boolean }> {
+  handle(clientIdentifier: ClientIdentifier, sensorValue: ButtonState): Promise<{ status: boolean }> {
     return this.webClient.put<{ status: boolean }>({
       baseUrl: this.config.baseUrl,
       path: this.config.sensorValue,
-      headers: { authorization: collectionOfButtonsData.clientId },
-      uriVariables: {
-        widgetId: collectionOfButtonsData.widget.widgetId,
-        buttonId: collectionOfButtonsData.data.buttonId
-      },
-      body: { value: collectionOfButtonsData.data.value }
+      headers: { authorization: clientIdentifier.clientId },
+      uriVariables: { widgetId: clientIdentifier.widget.widgetId, buttonId: sensorValue.buttonId },
+      body: { value: sensorValue.value }
     })
   }
 
