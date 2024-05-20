@@ -29,7 +29,7 @@ export class BoardService {
   }
 
   handleHeartBeat(payload: ClientIdentifier): Promise<void> {
-    return this.webClient.post({
+    return this.webClient.put({
       baseUrl: this.config.baseUrl,
       path: this.config.heartBeat,
       headers: { authorization: payload.clientId }
