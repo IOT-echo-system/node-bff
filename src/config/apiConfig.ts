@@ -15,9 +15,16 @@ const collectionOfButtons = {
 } as const
 export type CollectionOfButtonsConfig = typeof collectionOfButtons
 
+const levelMonitor = {
+  baseUrl: '/widgets/level-monitor/{widgetId}',
+  sensorValue: '/value'
+} as const
+export type LevelMonitorConfig = typeof levelMonitor
+
 export const apiConfig = {
   baseUrl: process.env.API_GATEWAY_BASE_URL!,
   board,
   invoice,
-  collectionOfButtons
+  collectionOfButtons,
+  levelMonitor
 } as const
