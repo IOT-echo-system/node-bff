@@ -28,7 +28,7 @@ export const handleMqttMessage = (topic: string, payload: Buffer, packet: Packet
         return
       }
       case 'INVOICE': {
-        invoiceService.handle({ ...mqttTopicData, ...JSON.parse(payload.toString('utf-8')) } as InvoiceData).catch(() => ({}))
+        invoiceService.handle({ ...mqttTopicData, ...JSON.parse(payload.toString('utf-8')) }).catch(() => ({}))
         return
       }
       case 'COLLECTION_OF_BUTTONS': {
