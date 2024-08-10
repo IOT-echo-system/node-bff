@@ -7,5 +7,5 @@ export type ActionMap = {
   STATE: { action: 'STATE'; code?: never }
 }
 
-export type InvoiceData<T extends keyof ActionMap = keyof ActionMap> = ClientIdentifier & { data: ActionMap[T] }
+export type InvoiceData<T extends keyof ActionMap = keyof ActionMap> = ClientIdentifier & { code: ActionMap[T]['code'] }
 export type InvoiceState = { items: number; price: number; paid: boolean; error?: string }
